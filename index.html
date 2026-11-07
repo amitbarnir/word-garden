@@ -1,75 +1,409 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Garden · English Practice</title><style>
-:root{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:#24324a;background:#f5f7fc}*{box-sizing:border-box}body{margin:0}.wrap{max-width:960px;margin:auto;padding:22px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{font-size:28px;margin:0}h2{margin:0 0 14px;font-size:20px}p{color:#68768e}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;color:#7569ca;text-transform:uppercase}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:25px 0}.tabs button{background:white;color:#506078;border:1px solid #e1e6f0}.tabs button.active{background:#5d52b5;color:white}.panel{background:white;border:1px solid #e5eaf3;border-radius:20px;padding:24px;box-shadow:0 8px 25px #28345509;margin:15px 0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#fff;border:1px solid #e5eaf3;border-radius:16px;padding:18px}.stat strong{display:block;font-size:28px;color:#3b337c}.stat span{color:#68768e;font-size:13px}button{cursor:pointer;border:0;border-radius:12px;padding:12px 17px;font-weight:700;background:#5d52b5;color:white;font-size:14px}button.secondary{background:#f0eefb;color:#5146a5}button.danger{background:#fff0f0;color:#b14343}button:disabled{opacity:.5;cursor:default}input,select,textarea{width:100%;border:1px solid #dce3ef;border-radius:12px;padding:13px;font:inherit;background:white;color:#24324a}input:focus{outline:2px solid #a59af4}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row button{flex:0 0 auto}.prompt{font-size:clamp(30px,6vw,48px);font-weight:800;text-align:center;direction:rtl;margin:30px 0}.muted{color:#7a879c;font-size:13px}.progress{height:10px;background:#e9eaf5;border-radius:30px;overflow:hidden}.progress>div{height:100%;background:#70bfa3;transition:width .2s}.feedback{padding:17px;border-radius:14px;margin-top:16px;background:#fef3e7}.feedback.ok{background:#e8f7ef}.feedback strong{font-size:22px}.hidden{display:none!important}.wordrow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;border-bottom:1px solid #edf0f5;padding:12px 0}.wordrow:last-child{border:0}.wordrow .he{direction:rtl;text-align:right;font-weight:700}.pill{font-size:12px;background:#f0eefb;border-radius:20px;padding:5px 9px;color:#594eaa}.note{font-size:12px;color:#7a879c}.spaced{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}footer{margin:28px 0;color:#8a94a7;font-size:12px}@media(max-width:550px){.wrap{padding:13px}.panel{padding:18px}.stats{gap:7px}.stat{padding:12px}.stat strong{font-size:22px}.wordrow{grid-template-columns:1fr 1fr auto}.wordrow button{padding:8px}}
-.wheeltiles{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:22px auto;max-width:650px}.wheeltiles button{min-width:44px;height:48px;padding:7px;font-size:20px;background:#ece9ff;color:#42369a;border:2px solid #d3cbfa}.wheeltiles button:disabled{opacity:.25}.wheelguess{min-height:54px;text-align:center;border-bottom:3px solid #d6d0f5;letter-spacing:3px;font-size:23px;font-weight:800;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px}#wheelHe{margin:16px 0}#wheelSelect{max-width:300px} .crossgrid{display:grid;justify-content:center;gap:3px;margin:20px auto;overflow:auto;max-width:100%}.crosscell{width:34px;height:34px;border-radius:5px;display:grid;place-items:center;background:#fff;border:2px solid #c9d2e3;font-size:17px;font-weight:800}.crosscell.blank{visibility:hidden}.crosscell.active{background:#e6ddff;border-color:#7963d7}.crosscell.solved{background:#d9f4e7;border-color:#4aa47c}.crossclue{text-align:center;font-weight:700;margin:12px}.wheeltiles{max-width:360px}.wheeltiles button{border-radius:50%;width:52px;height:52px}.crossgrid{touch-action:manipulation}@media(max-width:450px){.crosscell{width:27px;height:27px;font-size:14px}} </style></head><body><div class="wrap"><header><div><div class="eyebrow">Learn a little every day ✨</div><h1>🌱 Word Garden</h1><p style="margin:6px 0">Your English spelling adventure</p></div><span class="pill" id="saveStatus">Saved on this device</span></header><nav class="tabs"><button class="active" data-tab="home">Dashboard</button><button data-tab="practice">Spelling game</button><button data-tab="wordscapes">Wordscapes 🧩</button><button data-tab="library">Word library</button><button data-tab="progress">Progress & backup</button></nav>
-<section id="home"><div class="stats"><div class="stat"><strong id="total">0</strong><span>Words collected</span></div><div class="stat"><strong id="mastered">0</strong><span>Spelled correctly ever</span></div><div class="stat"><strong id="sessions">0</strong><span>Sessions completed</span></div></div><div class="panel"><div class="eyebrow">Ready to play?</div><h2>Spelling challenge ✏️</h2><p>See the Hebrew meaning, type the English spelling, and keep going until every word is correct.</p><div class="row"><button id="startAll">Practice all words</button><button id="startNew" class="secondary">Practice words never mastered</button></div></div><div class="panel"><h2>Wordscapes 🧩</h2><p>Solve intersecting vocabulary words using the letter wheel.</p><button id="startWheelHome">Play Wordscapes</button></div></section>
-<section id="practice" class="hidden"><div class="panel"><div class="spaced"><span class="eyebrow">Spelling challenge</span><span class="muted" id="count">0 of 0 complete</span></div><div class="progress" style="margin:14px 0"><div id="bar" style="width:0%"></div></div><div id="game"><p style="text-align:center">Write this in English</p><div class="prompt" id="hebrew"></div><form id="answerForm"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the English spelling…" aria-label="English spelling"><button style="width:100%;margin-top:12px" id="submit">Check spelling</button></form><div id="feedback" class="feedback hidden" role="status"></div><button id="continue" class="hidden" style="width:100%;margin-top:12px">Continue →</button></div><div id="finished" class="hidden" style="text-align:center;padding:24px"><h2>🏆 Amazing work!</h2><p id="summary"></p><button id="again">Play again</button></div><div class="row" style="margin-top:18px"><button class="secondary" id="restart">Restart session</button><button class="secondary" id="backHome">Dashboard</button></div></div></section>
-<section id="wordscapes" class="hidden"><div class="panel"><div class="spaced"><span class="eyebrow">Letter puzzle</span><span class="pill" id="wheelCount"></span></div><h2 id="wheelTitle">Wordscapes</h2><p>Tap each letter once to spell the highlighted word. Solve every crossing word to finish the level.</p><div class="prompt" id="wheelHe" dir="rtl"></div><div id="crossGrid" class="crossgrid"></div><div id="crossClue" class="crossclue"></div><div id="wheelGuess" class="wheelguess" aria-live="polite"></div><div id="wheelTiles" class="wheeltiles"></div><div id="wheelFeedback" class="feedback hidden" role="status"></div><div class="row" style="justify-content:center;margin-top:18px"><button class="secondary" id="wheelClear">Clear letters</button><button id="wheelCheck">Check</button><button class="secondary" id="wheelNext">Next level →</button></div><div class="row" style="justify-content:center;margin-top:12px"><select id="wheelSelect" aria-label="Choose a word level"></select></div></div></section><section id="library" class="hidden"><div class="panel"><h2>Add vocabulary</h2><p class="muted">Add one pair or paste many lines as Hebrew = English. Duplicate pairs are skipped.</p><div class="row"><input id="newHe" placeholder="Hebrew word" dir="rtl"><input id="newEn" placeholder="English translation"></div><button id="add" style="margin-top:10px">Add word</button><details style="margin-top:18px"><summary>Bulk add words</summary><textarea id="bulk" rows="5" style="margin-top:10px" placeholder="חתול = cat&#10;כלב = dog"></textarea><button id="bulkAdd">Import pairs</button></details></div><div class="panel"><div class="spaced"><h2>My word collection</h2><span class="pill" id="libCount"></span></div><input id="search" placeholder="Search in Hebrew or English"><div id="wordList"></div></div></section>
-<section id="progress" class="hidden"><div class="panel"><h2>Learning progress</h2><div class="stats"><div class="stat"><strong id="attempts">0</strong><span>Total attempts</span></div><div class="stat"><strong id="accuracy">—</strong><span>Accuracy</span></div><div class="stat"><strong id="hard">0</strong><span>Words with mistakes</span></div></div><p class="muted">Progress is tracked across sessions on this browser.</p></div><div class="panel"><h2>Backup your vocabulary & progress</h2><p>Export a backup to move between devices or protect your data. Importing replaces the current collection.</p><div class="row"><button id="export">Download backup</button><label style="flex:1"><input type="file" id="import" accept="application/json,.json" aria-label="Import backup"></label></div><p class="note">This version saves in your browser, not to an online account. Clearing browser data may erase progress. It does not automatically synchronize with ChatGPT or other devices.</p></div></section><footer>Word Garden · Version 3 · Your progress stays on this device unless you export it.</footer></div>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Word Garden · English Practice</title>
+<style>
+:root{
+  --bg:#f5f7fc; --card:#fff; --ink:#24324a; --muted:#68768e; --line:#e5eaf3;
+  --brand:#5d52b5; --brand-soft:#f0eefb; --ok:#e8f7ef; --warn:#fef3e7;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink)}
+.wrap{max-width:980px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:28px;margin:0} h2{margin:0 0 14px;font-size:20px} p{color:var(--muted)}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;color:#7569ca;text-transform:uppercase}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:25px 0}
+.tabs button{background:var(--card);color:#506078;border:1px solid #e1e6f0}
+.tabs button.active{background:var(--brand);color:#fff}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 8px 25px #28345509;margin:15px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}.stat strong{display:block;font-size:28px;color:#3b337c}.stat span{color:var(--muted);font-size:13px}
+button{cursor:pointer;border:0;border-radius:12px;padding:12px 17px;font-weight:700;background:var(--brand);color:#fff;font-size:14px}
+button.secondary{background:var(--brand-soft);color:#5146a5}
+button.danger{background:#fff0f0;color:#b14343}
+button:disabled{opacity:.5;cursor:default}
+input,select,textarea{width:100%;border:1px solid #dce3ef;border-radius:12px;padding:13px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:2px solid #a59af4}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row button{flex:0 0 auto}
+.prompt{font-size:clamp(30px,6vw,48px);font-weight:800;text-align:center;direction:rtl;margin:30px 0}
+.muted{color:#7a879c;font-size:13px}.progress{height:10px;background:#e9eaf5;border-radius:30px;overflow:hidden}.progress>div{height:100%;background:#70bfa3;transition:width .2s}
+.feedback{padding:17px;border-radius:14px;margin-top:16px;background:var(--warn)} .feedback.ok{background:var(--ok)} .feedback strong{font-size:22px}
+.hidden{display:none!important}.spaced{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.wordrow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;border-bottom:1px solid #edf0f5;padding:12px 0}.wordrow:last-child{border:0}.wordrow .he{direction:rtl;text-align:right;font-weight:700}
+.pill{font-size:12px;background:var(--brand-soft);border-radius:20px;padding:5px 9px;color:#594eaa}.note{font-size:12px;color:#7a879c}
+footer{margin:28px 0;color:#8a94a7;font-size:12px}
+
+/* Wordscapes */
+.crossgrid{display:grid;gap:3px;justify-content:center;margin:14px auto 20px;width:fit-content;max-width:100%;overflow-x:auto;direction:ltr}
+.crosscell{width:37px;height:37px;display:grid;place-items:center;border-radius:6px;border:2px solid #c9d2e3;background:#fff;color:#293b56;font-size:19px;font-weight:850;flex-shrink:0}
+.crosscell.blank{visibility:hidden}.crosscell.main{background:#efeaff;border-color:#c9baf5}.crosscell.solved{background:#d9f4e7;border-color:#60b891;color:#207b55}
+.wordscapes-clue{text-align:center;font-weight:700;margin:8px 0 6px}
+.ws-wheel-wrap{display:flex;justify-content:center;align-items:center;flex-direction:column;margin:18px 0}
+#wsGuess{min-height:54px;text-align:center;border-bottom:3px solid #d6d0f5;letter-spacing:3px;font-size:23px;font-weight:800;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;min-width:240px;max-width:100%}
+#wheelArea{position:relative;width:300px;height:300px;touch-action:none;user-select:none;-webkit-user-select:none}
+#wheelSvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:1;pointer-events:none}
+#wheelCircle{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle at center,#ffffff 0,#f5f2ff 60%,#ede8ff 100%);border:2px solid #dbd2ff;z-index:0}
+.letter-node{position:absolute;width:56px;height:56px;border-radius:50%;background:#ece9ff;border:2px solid #d3cbfa;color:#42369a;font-size:24px;font-weight:800;display:grid;place-items:center;transform:translate(-50%,-50%);box-shadow:0 2px 10px #0001;z-index:2;touch-action:none;user-select:none;-webkit-user-select:none}
+.letter-node.selected{background:#5d52b5;color:#fff;border-color:#5d52b5}
+#wsHint{margin-top:8px}
+@media(max-width:550px){.wrap{padding:13px}.panel{padding:18px}.stats{gap:7px}.stat{padding:12px}.stat strong{font-size:22px}.wordrow{grid-template-columns:1fr 1fr auto}.wordrow button{padding:8px}#wheelArea{width:270px;height:270px}.letter-node{width:52px;height:52px;font-size:22px}.crosscell{width:29px;height:29px;font-size:15px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Learn a little every day ✨</div>
+      <h1>🌱 Word Garden</h1>
+      <p style="margin:6px 0">Your English spelling adventure</p>
+    </div>
+    <span class="pill" id="saveStatus">Saved on this device</span>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-tab="home">Dashboard</button>
+    <button data-tab="practice">Spelling game</button>
+    <button data-tab="wordscapes">Wordscapes 🧩</button>
+    <button data-tab="library">Word library</button>
+    <button data-tab="progress">Progress & backup</button>
+  </nav>
+
+  <section id="home">
+    <div class="stats">
+      <div class="stat"><strong id="total">0</strong><span>Words collected</span></div>
+      <div class="stat"><strong id="mastered">0</strong><span>Spelled correctly ever</span></div>
+      <div class="stat"><strong id="sessions">0</strong><span>Sessions completed</span></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Ready to play?</div>
+      <h2>Spelling challenge ✏️</h2>
+      <p>See the Hebrew meaning, type the English spelling, and keep going until every word is correct.</p>
+      <div class="row">
+        <button id="startAll">Practice all words</button>
+        <button id="startNew" class="secondary">Practice words never mastered</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Wordscapes 🧩</h2>
+      <p>Drag across the letter wheel to solve an intersecting crossword. Every level has at least one vocabulary word plus easy English words.</p>
+      <button id="startWheelHome">Play Wordscapes</button>
+    </div>
+  </section>
+
+  <section id="practice" class="hidden">
+    <div class="panel">
+      <div class="spaced"><span class="eyebrow">Spelling challenge</span><span class="muted" id="count">0 of 0 complete</span></div>
+      <div class="progress" style="margin:14px 0"><div id="bar" style="width:0%"></div></div>
+      <div id="game">
+        <p style="text-align:center">Write this in English</p>
+        <div class="prompt" id="hebrew"></div>
+        <form id="answerForm">
+          <input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the English spelling…" aria-label="English spelling">
+          <button style="width:100%;margin-top:12px" id="submit">Check spelling</button>
+        </form>
+        <div id="feedback" class="feedback hidden" role="status"></div>
+        <button id="continue" class="hidden" style="width:100%;margin-top:12px">Continue →</button>
+      </div>
+      <div id="finished" class="hidden" style="text-align:center;padding:24px">
+        <h2>🏆 Amazing work!</h2>
+        <p id="summary"></p>
+        <button id="again">Play again</button>
+      </div>
+      <div class="row" style="margin-top:18px">
+        <button class="secondary" id="restart">Restart session</button>
+        <button class="secondary" id="backHome">Dashboard</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="wordscapes" class="hidden">
+    <div class="panel">
+      <div class="spaced"><span class="eyebrow">Wordscapes</span><span class="pill" id="wheelCount"></span></div>
+      <h2 id="wheelTitle">Wordscapes</h2>
+      <div class="prompt" id="wheelHe"></div>
+      <div class="wordscapes-clue" id="wsMainLabel"></div>
+      <div id="wsWords" class="crossgrid" aria-label="Crossword puzzle"></div>
+      <div id="wsGuess" aria-live="polite"></div>
+      <div class="ws-wheel-wrap">
+        <div id="wheelArea" aria-label="Letter wheel">
+          <svg id="wheelSvg" viewBox="0 0 300 300" aria-hidden="true">
+            <polyline id="wheelPath" fill="none" stroke="#6f62d6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          </svg>
+          <div id="wheelCircle"></div>
+          <div id="wheelNodes"></div>
+        </div>
+        <div class="muted" id="wsHint">Drag through the letters and release to submit.</div>
+      </div>
+      <div id="wheelFeedback" class="feedback hidden" role="status"></div>
+      <div class="row" style="justify-content:center;margin-top:18px">
+        <button class="secondary" id="wheelClear">Clear</button>
+        <button class="secondary" id="wheelShuffle">Shuffle</button>
+        <button id="wheelNext">Next level →</button>
+      </div>
+      <div class="row" style="justify-content:center;margin-top:12px">
+        <select id="wheelSelect" aria-label="Choose a word level"></select>
+      </div>
+    </div>
+  </section>
+
+  <section id="library" class="hidden">
+    <div class="panel">
+      <h2>Add vocabulary</h2>
+      <p class="muted">Add one pair or paste many lines as Hebrew = English. Duplicate pairs are skipped.</p>
+      <div class="row"><input id="newHe" placeholder="Hebrew word" dir="rtl"><input id="newEn" placeholder="English translation"></div>
+      <button id="add" style="margin-top:10px">Add word</button>
+      <details style="margin-top:18px">
+        <summary>Bulk add words</summary>
+        <textarea id="bulk" rows="5" style="margin-top:10px" placeholder="חתול = cat&#10;כלב = dog"></textarea>
+        <button id="bulkAdd">Import pairs</button>
+      </details>
+    </div>
+    <div class="panel">
+      <div class="spaced"><h2>My word collection</h2><span class="pill" id="libCount"></span></div>
+      <input id="search" placeholder="Search in Hebrew or English">
+      <div id="wordList"></div>
+    </div>
+  </section>
+
+  <section id="progress" class="hidden">
+    <div class="panel">
+      <h2>Learning progress</h2>
+      <div class="stats">
+        <div class="stat"><strong id="attempts">0</strong><span>Total attempts</span></div>
+        <div class="stat"><strong id="accuracy">—</strong><span>Accuracy</span></div>
+        <div class="stat"><strong id="hard">0</strong><span>Words missed at least once</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Backup your garden</h2>
+      <p class="muted">Export your saved words and progress, or import a previous backup.</p>
+      <div class="row"><button id="export">Export backup</button><label class="secondary" style="display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border-radius:12px;cursor:pointer">Import backup<input type="file" id="import" accept="application/json" class="hidden"></label></div>
+    </div>
+  </section>
+
+  <footer>Version 4 · Your progress stays on this device unless you export it.</footer>
+</div>
+
 <script>
-(()=>{'use strict';const KEY='word-garden-v1';const seed=[['מוזיקה','music'],['שיעור','lesson'],['אחות','sister'],['אח','brother'],['יום','day'],['עיר','town'],['יש לי','I have'],['אני בת ... שנים','I am ... years old'],['מועדף / אהוב','favorite'],['מורה','teacher'],['לרקוד','dance'],['אני','I'],['כתום','orange'],['קטן','small'],['רך','soft'],['שולחן כתיבה','desk'],['לגור','live'],['ללכת','go'],['עפרון צבעוני','crayon'],['כיתה','grade'],['לראות','see']];let data;try{data=JSON.parse(localStorage.getItem(KEY))}catch{}if(!data||!Array.isArray(data.words))data={words:seed.map(([he,en],i)=>({id:i+1,he,en,tries:0,correct:0,wrong:0})),sessions:0};const $=id=>document.getElementById(id);data.wheelDone=data.wheelDone||{};const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data));$('saveStatus').textContent='Saved on this device'}catch{$('saveStatus').textContent='Storage unavailable'}};const normalize=s=>s.toLocaleLowerCase().replace(/[…\.]/g,'').replace(/\s+/g,' ').trim();let pool=[],current=null,sessionTotal=0,sessionAttempts=0,sessionErrors=0,phase='answer';const pick=()=>{if(!pool.length){finish();return}let choices=pool.filter(id=>id!==current);if(!choices.length)choices=pool;current=choices[Math.floor(Math.random()*choices.length)];phase='answer';$('answer').value='';$('answer').disabled=false;$('answerForm').classList.remove('hidden');$('feedback').classList.add('hidden');$('continue').classList.add('hidden');$('hebrew').textContent=data.words.find(w=>w.id===current).he;updateGame();$('answer').focus()};const updateGame=()=>{let done=sessionTotal-pool.length;$('count').textContent=`${done} of ${sessionTotal} complete`;$('bar').style.width=(sessionTotal?100*done/sessionTotal:0)+'%'};const start=(onlyNew=false)=>{pool=data.words.filter(w=>!onlyNew||!w.correct).map(w=>w.id);if(!pool.length){alert('No words in this selection. Try all words!');return}current=null;sessionTotal=pool.length;sessionAttempts=0;sessionErrors=0;$('finished').classList.add('hidden');$('game').classList.remove('hidden');show('practice');pick()};function finish(){data.sessions++;save();render();$('game').classList.add('hidden');$('finished').classList.remove('hidden');$('summary').textContent=`You completed ${sessionTotal} words in ${sessionAttempts} attempts, with ${sessionErrors} spelling mistakes.`;updateGame()};function show(name){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));['home','practice','wordscapes','library','progress'].forEach(id=>$(id).classList.toggle('hidden',id!==name));render()};document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.tab));$('startAll').onclick=()=>start();$('startNew').onclick=()=>start(true);$('again').onclick=()=>start();$('restart').onclick=()=>{if(confirm('Restart the current practice session?'))start()};$('backHome').onclick=()=>show('home');$('answerForm').onsubmit=e=>{e.preventDefault();if(phase!=='answer')return;const guess=$('answer').value.trim();if(!guess)return;const w=data.words.find(w=>w.id===current);w.tries++;sessionAttempts++;const ok=normalize(guess)===normalize(w.en);if(ok){w.correct++;pool=pool.filter(id=>id!==current);$('feedback').className='feedback ok';$('feedback').textContent='✓ Correct! Great job. This word is complete for today.'}else{w.wrong++;sessionErrors++;$('feedback').className='feedback';$('feedback').textContent='Not quite! Correct spelling: '+w.en+'. You will see this word again.'}phase='feedback';$('answer').disabled=true;$('answerForm').classList.add('hidden');$('continue').classList.remove('hidden');save();render();updateGame()};$('continue').onclick=pick;function addWord(he,en){he=he.trim();en=en.trim();if(!he||!en)return false;if(data.words.some(w=>normalize(w.he)===normalize(he)&&normalize(w.en)===normalize(en)))return false;data.words.push({id:Math.max(0,...data.words.map(w=>w.id))+1,he,en,tries:0,correct:0,wrong:0});return true};$('add').onclick=()=>{if(addWord($('newHe').value,$('newEn').value)){save();render();$('newHe').value='';$('newEn').value=''}else alert('Enter both words, or this pair already exists.')};$('bulkAdd').onclick=()=>{let n=0;for(const line of $('bulk').value.split('\n')){const m=line.match(/^(.+?)\s*(?:=|\t| → )\s*(.+)$/);if(m&&addWord(m[1],m[2]))n++}save();render();$('bulk').value='';alert(`${n} words added.`)};$('search').oninput=renderList;function renderList(){const q=normalize($('search').value);const arr=data.words.filter(w=>normalize(w.he).includes(q)||normalize(w.en).includes(q));$('wordList').replaceChildren();for(const w of arr){const row=document.createElement('div');row.className='wordrow';const he=document.createElement('div');he.className='he';he.textContent=w.he;const en=document.createElement('div');en.textContent=w.en;const btn=document.createElement('button');btn.className='secondary';btn.textContent='Edit';btn.onclick=()=>{const h=prompt('Hebrew word',w.he);if(h===null)return;const e=prompt('English translation',w.en);if(e===null)return;if(!h.trim()||!e.trim())return alert('Both fields are required');w.he=h.trim();w.en=e.trim();save();render()};row.append(he,en,btn);$('wordList').append(row)}}function render(){let total=data.words.length,mastered=data.words.filter(w=>w.correct>0).length,attempts=data.words.reduce((s,w)=>s+w.tries,0),correct=data.words.reduce((s,w)=>s+w.correct,0);$('total').textContent=total;$('mastered').textContent=mastered;$('sessions').textContent=data.sessions;$('attempts').textContent=attempts;$('accuracy').textContent=attempts?Math.round(correct/attempts*100)+'%':'—';$('hard').textContent=data.words.filter(w=>w.wrong>0).length;$('libCount').textContent=total+' words';renderList()};$('export').onclick=()=>{const blob=new Blob([JSON.stringify({version:1,...data},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='word-garden-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('import').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!Array.isArray(obj.words)||!obj.words.every(w=>typeof w.he==='string'&&typeof w.en==='string'))throw Error('Invalid backup');if(!confirm('Replace your current vocabulary and progress with this backup?'))return;data={words:obj.words.map((w,i)=>({id:i+1,he:w.he,en:w.en,tries:Number(w.tries)||0,correct:Number(w.correct)||0,wrong:Number(w.wrong)||0})),sessions:Number(obj.sessions)||0,wheelDone:obj.wheelDone||{}};save();render();openWheel(0);alert('Backup restored')}catch(err){alert('Could not import: '+err.message)}finally{e.target.value=''}};
-// Crossword levels: the primary word crosses at least one other vocabulary word.
-let wheelIndex=0, puzzle=null,active=0,guess='',wheelLocked=false,wheelLetters=[],wheelUsed=[];
-const wheelTarget=w=>w.en.toUpperCase().replace(/[^A-Z]/g,'');
-function buildPuzzle(index){
- const main=data.words[index], base=wheelTarget(main);
- const candidates=data.words.map(w=>({word:wheelTarget(w),he:w.he,id:w.id})).filter(x=>x.id!==main.id&&x.word.length>=2&&x.word.length<=12&&x.word!==base);
- const placed=[{word:base,he:main.he,r:0,c:0,dir:'h',solved:false}];
- // Find a genuine intersection, preferring short words and central crossings.
- const options=[];
- for(const x of candidates)for(let i=0;i<base.length;i++)for(let j=0;j<x.word.length;j++)if(base[i]===x.word[j])options.push({x,i,j,score:Math.abs(i-base.length/2)+Math.abs(j-x.word.length/2)+x.word.length*.08});
- options.sort((a,b)=>a.score-b.score);
- if(options.length){const o=options[0];placed.push({word:o.x.word,he:o.x.he,r:-o.j,c:o.i,dir:'v',solved:false})}
- // Additional vertical crossing where it does not collide with existing vertical word.
- for(const o of options){if(placed.length>=3)break;if(o.i===placed[1]?.c)continue;const r=-o.j,c=o.i;let valid=true;for(let k=0;k<o.x.word.length;k++){const rr=r+k;for(const q of placed.slice(1)){if(q.c===c&&rr>=q.r-1&&rr<=q.r+q.word.length)valid=false}}if(valid)placed.push({word:o.x.word,he:o.x.he,r,c,dir:'v',solved:false})}
- const minR=Math.min(...placed.map(x=>x.r)),minC=0;
- for(const x of placed){x.r-=minR;x.c-=minC}
- return placed;
+(()=>{
+'use strict';
+const KEY='word-garden-v4';
+const seed=[
+ ['מוזיקה','music'],['שיעור','lesson'],['אחות','sister'],['אח','brother'],['יום','day'],['עיר','town'],['יש לי','I have'],['אני בת ... שנים','I am ... years old'],['מועדף / אהוב','favorite'],['מורה','teacher'],['לרקוד','dance'],['אני','I'],['כתום','orange'],['קטן','small'],['רך','soft'],['שולחן כתיבה','desk'],['לגור','live'],['ללכת','go'],['עפרון צבעוני','crayon'],['כיתה','grade'],['לראות','see']
+];
+const COMMON_WORDS=[
+ 'all','art','ate','do','dot','eye','fit','got','its','lie','lot','mat','met','net','not','now','oil','our','out','own','pay','pot','rat','sat','sea','son','sum','tan','tap','tie','tin','tip','toy','two','won','yet',
+ 'am','an','as','at','be','do','go','he','if','in','is','it','me','my','no','of','on','or','so','to','up','us','we',
+ 'age','ago','air','and','ant','any','ape','are','arm','art','ate','bad','bag','bar','bat','bed','bee','big','bit','boat','bog','bone','book','boy','bug','bun','bus','can','cap','car','cat','cave','clay','cone','cool','cow','cry','cut','day','deal','dear','desk','dog','done','door','dot','dry','ear','eat','era','far','fat','fine','for','game','gas','gate','goat','gold','good','grade','green','gum','hat','have','ice','ink','jar','key','land','late','lay','leaf','learn','lesson','let','line','live','love','man','map','may','menu','mice','mix','mold','more','music','near','net','new','nice','note','not','now','old','one','orange','our','pan','part','pen','pet','play','ran','ray','red','ride','ring','road','rock','room','sad','sea','see','set','she','sit','small','soft','song','star','stay','sun','table','take','tan','tea','teach','teacher','team','ten','the','their','them','then','there','time','tone','top','town','tree','use','van','way','we','wear','well','who','word','year','years','yes','yet'
+];
+const $=id=>document.getElementById(id);
+const normalize=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+const cleanLetters=s=>String(s||'').toUpperCase().replace(/[^A-Z]/g,'');
+const tokenLetters=s=>String(s||'').toUpperCase().match(/[A-Z]+/g)||[];
+const uniq=a=>[...new Set(a)];
+const countMap=word=>{const m={}; for(const ch of word) m[ch]=(m[ch]||0)+1; return m};
+const canSpell=(word, bank)=>{const need=countMap(word); for(const [ch,n] of Object.entries(need)) if((bank[ch]||0)<n) return false; return true;};
+let data; try{ data=JSON.parse(localStorage.getItem(KEY)); if(!data) data=JSON.parse(localStorage.getItem('word-garden-v1')); }catch{}
+if(!data || !Array.isArray(data.words)) data={words:seed.map(([he,en],i)=>({id:i+1,he,en,tries:0,correct:0,wrong:0})),sessions:0,wheelDone:{}};
+data.wheelDone=data.wheelDone||{};
+function save(){ localStorage.setItem(KEY, JSON.stringify(data)); $('saveStatus').textContent='Saved on this device'; }
+function show(tab){ for(const sec of document.querySelectorAll('section')) sec.classList.add('hidden'); $(tab).classList.remove('hidden'); for(const b of document.querySelectorAll('.tabs button')) b.classList.toggle('active', b.dataset.tab===tab); }
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ if(b.dataset.tab==='practice'&&!sessionActive) startSession('all'); else show(b.dataset.tab); });
+
+// Dashboard + library + backup
+function puzzleBaseWord(entry){
+  const tokens=tokenLetters(entry.en);
+  if(!tokens.length) return '';
+  const multiPreferred={ 'I HAVE':'HAVE', 'I AM YEARS OLD':'YEARS' };
+  const whole=tokens.join(' ');
+  if(multiPreferred[whole]) return multiPreferred[whole];
+  const best=tokens.slice().sort((a,b)=>b.length-a.length)[0]||'';
+  return best.length>=2 ? best : '';
 }
-function renderWheel(){if(!data.words.length)return;
- const w=data.words[wheelIndex];$('wheelTitle').textContent='Level '+(wheelIndex+1)+(data.wheelDone[w.id]?' ✓':'');$('wheelHe').textContent=w.he;
- $('wheelCount').textContent=Object.keys(data.wheelDone).filter(id=>data.wheelDone[id]&&data.words.some(w=>String(w.id)===id)).length+' / '+data.words.length+' levels solved';
- const cols=Math.max(...puzzle.map(x=>x.c+(x.dir==='h'?x.word.length:1))),rows=Math.max(...puzzle.map(x=>x.r+(x.dir==='v'?x.word.length:1)));
- const grid=$('crossGrid');grid.style.gridTemplateColumns=`repeat(${cols},max-content)`;grid.replaceChildren();
- for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
- const cell=document.createElement('div');cell.className='crosscell';let matches=[];
- puzzle.forEach((x,i)=>{const k=x.dir==='h'?c-x.c:r-x.r;if((x.dir==='h'?r===x.r:c===x.c)&&k>=0&&k<x.word.length)matches.push({x,i,k})});
- if(!matches.length)cell.classList.add('blank');else{
- if(matches.some(z=>z.i===active))cell.classList.add('active');
- const known=matches.find(z=>z.x.solved);if(known){cell.textContent=known.x.word[known.k];cell.classList.add('solved')}
- cell.onclick=()=>{const z=matches.find(z=>!z.x.solved)||matches[0];active=z.i;guess='';wheelUsed=[];$('wheelFeedback').classList.add('hidden');renderWheel()};
- }grid.append(cell)}
- const x=puzzle[active];$('crossClue').textContent=`${puzzle.filter(z=>z.solved).length}/${puzzle.length} solved · ${x.dir==='h'?'Across':'Down'}: ${x.he}`;
- $('wheelGuess').textContent=guess||'_ '.repeat(x.word.length);
- const tiles=$('wheelTiles');tiles.replaceChildren();
- wheelLetters.forEach((letter,i)=>{const btn=document.createElement('button');btn.textContent=letter;
- btn.disabled=x.solved||wheelLocked||wheelUsed.includes(i)||guess.length>=x.word.length;
- btn.setAttribute('aria-label','Letter '+letter);
- btn.onclick=()=>{if(guess.length<x.word.length&&!wheelUsed.includes(i)){wheelUsed.push(i);guess+=letter;renderWheel()}};
- tiles.append(btn)});
- $('wheelCheck').disabled=x.solved||wheelLocked||!guess;$('wheelClear').disabled=x.solved||wheelLocked||!guess;
- $('wheelSelect').replaceChildren();data.words.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+v.he+(data.wheelDone[v.id]?' ✓':'');$('wheelSelect').append(o)});$('wheelSelect').value=String(wheelIndex);
+const BANK_EXTENSIONS={GO:'GOAT', SEE:'SEED', DAY:'TODAY', TOWN:'TOWNS', SOFT:'SOFTER', DESK:'DESKS', LIVE:'OLIVE', I:'INK'};
+function buildLevelForWord(entry){
+  const main=puzzleBaseWord(entry);
+  if(!main || main.length<2) return null;
+  const bankWord=BANK_EXTENSIONS[main] || main;
+  const bank=countMap(bankWord);
+  let extra=COMMON_WORDS.map(w=>cleanLetters(w)).filter(w=>w.length>=2 && w.length<=bankWord.length && w!==main && canSpell(w,bank));
+  if(bankWord!==main && !extra.includes(bankWord)) extra.push(bankWord);
+  extra=uniq(extra).sort((a,b)=> (b.length-a.length) || a.localeCompare(b));
+  const placed=placeCrossword(main,extra);
+  return {key:'w'+entry.id, entryId:entry.id, he:entry.he, sourceEn:entry.en, main, bankWord, placed, targets:placed.map(p=>p.word)};
 }
-function makeWheelLetters(words){
- const needed={};for(const item of words){const counts={};for(const letter of item.word)counts[letter]=(counts[letter]||0)+1;
- for(const [letter,count] of Object.entries(counts))needed[letter]=Math.max(needed[letter]||0,count)}
- const letters=Object.entries(needed).flatMap(([letter,count])=>Array(count).fill(letter));
- for(let i=letters.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[letters[i],letters[j]]=[letters[j],letters[i]]}
- return letters;
+function placeCrossword(main,candidates){
+  const placed=[{word:main,r:0,c:0,dir:'h'}];
+  const occupancy=()=>{ const m=new Map(); for(const p of placed) for(let i=0;i<p.word.length;i++){
+    const r=p.r+(p.dir==='v'?i:0), c=p.c+(p.dir==='h'?i:0), key=r+','+c;
+    const existing=m.get(key)||{letter:p.word[i],dirs:[]}; existing.dirs.push(p.dir); m.set(key,existing);
+  } return m; };
+  function valid(word,r,c,dir,map){
+    const dr=dir==='v'?1:0, dc=dir==='h'?1:0;
+    if(map.has((r-dr)+','+(c-dc)) || map.has((r+dr*word.length)+','+(c+dc*word.length))) return false;
+    let crossing=0;
+    for(let i=0;i<word.length;i++){
+      const y=r+dr*i,x=c+dc*i,key=y+','+x,found=map.get(key);
+      if(found){ if(found.letter!==word[i] || found.dirs.includes(dir)) return false; crossing++; }
+      else {
+        // Parallel neighboring letters would create invalid extra words.
+        if(dir==='h' && (map.has((y-1)+','+x)||map.has((y+1)+','+x))) return false;
+        if(dir==='v' && (map.has(y+','+(x-1))||map.has(y+','+(x+1)))) return false;
+      }
+    }
+    return crossing>0;
+  }
+  for(const word of candidates){
+    if(placed.length>=6) break;
+    const map=occupancy(), options=[];
+    for(const p of placed){
+      for(let i=0;i<p.word.length;i++) for(let j=0;j<word.length;j++){
+        if(p.word[i]!==word[j]) continue;
+        const dir=p.dir==='h'?'v':'h', crossR=p.r+(p.dir==='v'?i:0), crossC=p.c+(p.dir==='h'?i:0);
+        const r=crossR-(dir==='v'?j:0),c=crossC-(dir==='h'?j:0);
+        if(valid(word,r,c,dir,map)) options.push({word,r,c,dir,score:Math.abs(r)+Math.abs(c)+Math.abs(word.length-main.length)*.15});
+      }
+    }
+    if(options.length){ options.sort((a,b)=>a.score-b.score); placed.push(options[0]); }
+  }
+  const minR=Math.min(...placed.map(p=>p.r)), minC=Math.min(...placed.map(p=>p.c));
+  for(const p of placed){p.r-=minR;p.c-=minC;}
+  return placed;
 }
-function openWheel(index){if(!data.words.length)return;wheelIndex=index;puzzle=buildPuzzle(index);wheelLetters=makeWheelLetters(puzzle);wheelUsed=[];active=0;guess='';wheelLocked=false;$('wheelFeedback').classList.add('hidden');renderWheel();show('wordscapes')}
-$('startWheelHome').onclick=()=>openWheel(0);
-$('wheelSelect').onchange=e=>openWheel(Number(e.target.value));
-$('wheelClear').onclick=()=>{guess='';wheelUsed=[];$('wheelFeedback').classList.add('hidden');renderWheel()};
-$('wheelCheck').onclick=()=>{const x=puzzle[active];if(guess===x.word){x.solved=true;guess='';wheelUsed=[];if(puzzle.every(x=>x.solved)){data.wheelDone[data.words[wheelIndex].id]=true;wheelLocked=true;$('wheelFeedback').className='feedback ok';$('wheelFeedback').textContent='✓ Crossword complete!';save()}else{$('wheelFeedback').className='feedback ok';$('wheelFeedback').textContent='✓ Correct! Now solve the crossing word.';active=puzzle.findIndex(x=>!x.solved)}}else{$('wheelFeedback').className='feedback';$('wheelFeedback').textContent='Not quite — try again.';guess='';wheelUsed=[]}renderWheel()};
-$('wheelNext').onclick=()=>openWheel((wheelIndex+1)%data.words.length);
- document.addEventListener('keydown', e=>{
-   if($('wordscapes').classList.contains('hidden')||!puzzle||wheelLocked||puzzle[active].solved)return;
-   if(e.key==='Backspace'){if(wheelUsed.length){e.preventDefault();wheelUsed.pop();guess=guess.slice(0,-1);renderWheel()}return}
-   if(e.key==='Enter'&&guess){e.preventDefault();$('wheelCheck').click();return}
-   if(e.key.length===1&&/^[a-z]$/i.test(e.key)&&document.activeElement?.tagName!=='SELECT'){
-     const i=wheelLetters.findIndex((ch,index)=>ch===e.key.toUpperCase()&&!wheelUsed.includes(index));
-     if(i>=0&&guess.length<puzzle[active].word.length){wheelUsed.push(i);guess+=wheelLetters[i];renderWheel()}
-   }
- });
-save();render();openWheel(0);show('home')})();
-</script></body></html>
+function getLevels(){ return data.words.map(buildLevelForWord).filter(Boolean); }
+function renderList(){
+  const q=normalize($('search').value);
+  const arr=data.words.filter(w=>normalize(w.he).includes(q)||normalize(w.en).includes(q));
+  $('wordList').replaceChildren();
+  for(const w of arr){
+    const row=document.createElement('div'); row.className='wordrow';
+    const he=document.createElement('div'); he.className='he'; he.textContent=w.he;
+    const en=document.createElement('div'); en.textContent=w.en;
+    const btn=document.createElement('button'); btn.className='secondary'; btn.textContent='Edit';
+    btn.onclick=()=>{ const h=prompt('Hebrew word',w.he); if(h===null) return; const e=prompt('English translation',w.en); if(e===null) return; if(!h.trim()||!e.trim()) return alert('Both fields are required'); w.he=h.trim(); w.en=e.trim(); save(); render(); refreshWordscapes(); };
+    row.append(he,en,btn); $('wordList').append(row);
+  }
+}
+function render(){
+  const total=data.words.length, mastered=data.words.filter(w=>w.correct>0).length, attempts=data.words.reduce((s,w)=>s+w.tries,0), correct=data.words.reduce((s,w)=>s+w.correct,0);
+  $('total').textContent=total; $('mastered').textContent=mastered; $('sessions').textContent=data.sessions;
+  $('attempts').textContent=attempts; $('accuracy').textContent=attempts?Math.round(correct/attempts*100)+'%':'—'; $('hard').textContent=data.words.filter(w=>w.wrong>0).length;
+  $('libCount').textContent=total+' words'; renderList();
+}
+function addWord(he,en){ he=he.trim(); en=en.trim(); if(!he||!en) return false; if(data.words.some(w=>normalize(w.he)===normalize(he)&&normalize(w.en)===normalize(en))) return false; data.words.push({id:Math.max(0,...data.words.map(w=>w.id))+1,he,en,tries:0,correct:0,wrong:0}); return true; }
+$('add').onclick=()=>{ if(addWord($('newHe').value,$('newEn').value)){ save(); $('newHe').value=''; $('newEn').value=''; render(); refreshWordscapes(); } else alert('Enter both words, or this pair already exists.'); };
+$('bulkAdd').onclick=()=>{ let n=0; for(const line of $('bulk').value.split('\n')){ const m=line.match(/^(.+?)\s*(?:=|\t| → )\s*(.+)$/); if(m && addWord(m[1],m[2])) n++; } save(); $('bulk').value=''; render(); refreshWordscapes(); alert(`${n} words added.`); };
+$('search').oninput=renderList;
+$('export').onclick=()=>{ const blob=new Blob([JSON.stringify({version:4,...data},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='word-garden-backup.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); };
+$('import').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ const obj=JSON.parse(await f.text()); if(!Array.isArray(obj.words)) throw Error('Invalid backup'); if(!confirm('Replace your current vocabulary and progress with this backup?')) return; data={words:obj.words.map((w,i)=>({id:w.id||i+1,he:w.he,en:w.en,tries:Number(w.tries)||0,correct:Number(w.correct)||0,wrong:Number(w.wrong)||0})),sessions:Number(obj.sessions)||0,wheelDone:obj.wheelDone||{}}; save(); render(); refreshWordscapes(); alert('Backup restored'); } catch(err){ alert('Could not import: '+err.message); } finally { e.target.value=''; } };
+
+// Spelling game
+let pool=[], current=null, phase='answer', sessionAttempts=0, sessionErrors=0, sessionActive=false, sessionTotal=0;
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+function startSession(mode){ const ids=(mode==='new'?data.words.filter(w=>!w.correct):data.words).map(w=>w.id); if(!ids.length) return alert(mode==='new'?'Every word has already been mastered once.':'Please add some words first.'); pool=shuffle(ids); sessionTotal=pool.length; sessionActive=true; sessionAttempts=0; sessionErrors=0; $('finished').classList.add('hidden'); $('game').classList.remove('hidden'); pick(); show('practice'); }
+$('startAll').onclick=()=>startSession('all'); $('startNew').onclick=()=>startSession('new'); $('again').onclick=()=>startSession('all'); $('restart').onclick=()=>startSession('all'); $('backHome').onclick=()=>show('home');
+function updateGame(){ const doneTotal=Math.max(0,sessionTotal-pool.length); const complete=sessionTotal?Math.round(doneTotal/sessionTotal*100):0; $('count').textContent=`${doneTotal} of ${sessionTotal} complete`; $('bar').style.width=complete+'%'; }
+function pick(){ if(!pool.length){ sessionActive=false; current=null; data.sessions++; save(); $('game').classList.add('hidden'); $('finished').classList.remove('hidden'); $('summary').textContent=`You finished the session with ${sessionAttempts-sessionErrors} correct answers and ${sessionErrors} mistakes corrected along the way.`; render(); return; } current=pool[Math.floor(Math.random()*pool.length)]; const w=data.words.find(x=>x.id===current); phase='answer'; $('hebrew').textContent=w.he; $('answer').value=''; $('answer').disabled=false; $('answerForm').classList.remove('hidden'); $('feedback').classList.add('hidden'); $('continue').classList.add('hidden'); $('answer').focus(); updateGame(); }
+$('answerForm').onsubmit=e=>{ e.preventDefault(); if(phase!=='answer') return; const guess=$('answer').value.trim(); if(!guess) return; const w=data.words.find(x=>x.id===current); w.tries++; sessionAttempts++; const ok=normalize(guess)===normalize(w.en); if(ok){ w.correct++; pool=pool.filter(id=>id!==current); $('feedback').className='feedback ok'; $('feedback').textContent='✓ Correct! Great job. This word is complete for today.'; } else { w.wrong++; sessionErrors++; $('feedback').className='feedback'; $('feedback').textContent='Not quite! Correct spelling: '+w.en+'. You will see this word again.'; }
+  phase='feedback'; $('answer').disabled=true; $('answerForm').classList.add('hidden'); $('feedback').classList.remove('hidden'); $('continue').classList.remove('hidden'); save(); render(); updateGame(); };
+$('continue').onclick=pick;
+
+// Wordscapes
+let levels=[], levelIndex=0, solvedWords=[], wheelLetters=[], selected=[], dragging=false, currentPointer=null;
+function refreshWordscapes(){
+  levels=getLevels();
+  if(!levels.length){ $('wsWords').innerHTML='<p class="muted">No puzzleable words yet. Add words with at least 2 English letters.</p>'; $('wheelNodes').replaceChildren(); $('wheelSelect').replaceChildren(); $('wheelCount').textContent='0 levels'; return; }
+  if(levelIndex>=levels.length) levelIndex=0;
+  openLevel(levelIndex,false);
+}
+function shuffleArrayInPlace(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function makeWheelLetters(main){ const letters=main.split(''); return shuffleArrayInPlace(letters); }
+function guessedWord(){ return selected.map(i=>wheelLetters[i]).join(''); }
+function renderLevel(){
+  const level=levels[levelIndex]; if(!level) return;
+  $('wheelTitle').textContent='Level '+(levelIndex+1)+(data.wheelDone[level.key]?' ✓':'');
+  $('wheelHe').textContent=level.he;
+  $('wsMainLabel').textContent='Find the word for the Hebrew clue ('+level.main.length+' letters) and the crossing words · '+solvedWords.length+' / '+level.targets.length+' found';
+  $('wheelCount').textContent=levels.filter(lvl=>data.wheelDone[lvl.key]).length+' / '+levels.length+' levels solved';
+  $('wheelSelect').replaceChildren(); levels.forEach((lvl,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=(i+1)+'. '+lvl.he+(data.wheelDone[lvl.key]?' ✓':''); $('wheelSelect').append(o); }); $('wheelSelect').value=String(levelIndex);
+  const cells=new Map(); let rows=0,cols=0;
+  for(const p of level.placed) for(let i=0;i<p.word.length;i++){
+    const r=p.r+(p.dir==='v'?i:0),c=p.c+(p.dir==='h'?i:0),key=r+','+c;
+    const cell=cells.get(key)||{letter:p.word[i],revealed:false,main:false};
+    cell.revealed ||= solvedWords.includes(p.word); cell.main ||= p.word===level.main;
+    cells.set(key,cell); rows=Math.max(rows,r+1); cols=Math.max(cols,c+1);
+  }
+  const grid=$('wsWords'); grid.replaceChildren();
+  const cellWidth=window.innerWidth<=550?29:37;
+  grid.style.gridTemplateColumns='repeat('+cols+','+cellWidth+'px)';
+  grid.style.width='min(100%,'+(cols*(cellWidth+3))+'px)';
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const cell=cells.get(r+','+c),el=document.createElement('div');
+    el.className='crosscell'+(!cell?' blank':(cell.main?' main':'')+(cell.revealed?' solved':''));
+    if(cell && cell.revealed) el.textContent=cell.letter;
+    grid.append(el);
+  }
+  $('wsGuess').textContent=guessedWord() || ' '; renderWheel();
+}
+function renderWheel(){
+  const level=levels[levelIndex]; if(!level) return;
+  const root=$('wheelNodes'); root.replaceChildren();
+  const cx=150, cy=150, radius=105, total=wheelLetters.length;
+  wheelLetters.forEach((letter,i)=>{
+    const ang=(-Math.PI/2)+(i*Math.PI*2/Math.max(total,1));
+    const x=cx+Math.cos(ang)*radius, y=cy+Math.sin(ang)*radius;
+    const node=document.createElement('div'); node.className='letter-node'+(selected.includes(i)?' selected':''); node.textContent=letter; node.dataset.index=i; node.style.left=(x/300*100)+'%'; node.style.top=(y/300*100)+'%';
+    node.onpointerdown=e=>{ e.preventDefault(); startDrag(i,e); };
+    root.append(node);
+  });
+  drawPath();
+}
+function drawPath(){
+  const level=levels[levelIndex]; if(!level) return;
+  const points=[]; const cx=150, cy=150, radius=105, total=wheelLetters.length;
+  selected.forEach(i=>{ const ang=(-Math.PI/2)+(i*Math.PI*2/Math.max(total,1)); points.push([cx+Math.cos(ang)*radius, cy+Math.sin(ang)*radius]); });
+  if(dragging && currentPointer && points.length) points.push([currentPointer.x,currentPointer.y]);
+  $('wheelPath').setAttribute('points', points.map(p=>p.join(',')).join(' '));
+  $('wsGuess').textContent=guessedWord() || ' ';
+}
+function clearSelection(){ selected=[]; dragging=false; currentPointer=null; drawPath(); renderWheel(); }
+function startDrag(index,e){ dragging=true; selected=[]; currentPointer=svgPoint(e); addSelection(index); drawPath(); window.addEventListener('pointermove', onDragMove); window.addEventListener('pointerup', finishDrag, {once:true}); window.addEventListener('pointercancel', cancelDrag, {once:true}); }
+function svgPoint(e){ const rect=$('wheelArea').getBoundingClientRect(); return {x:(e.clientX-rect.left)*(300/rect.width), y:(e.clientY-rect.top)*(300/rect.height)}; }
+function addSelection(index){ if(selected.includes(index)) return; selected.push(index); $('wheelFeedback').classList.add('hidden'); const el=$('wheelNodes').querySelector('[data-index=\"'+index+'\"]'); if(el) el.classList.add('selected'); drawPath(); }
+function onDragMove(e){ if(!dragging) return; currentPointer=svgPoint(e); const el=document.elementFromPoint(e.clientX,e.clientY); const node=el && el.closest ? el.closest('.letter-node') : null; if(node) addSelection(Number(node.dataset.index)); drawPath(); }
+function checkGuess(word){ const level=levels[levelIndex]; if(!word) return; const normalized=word.toUpperCase(); let msg=''; let ok=false;
+  if(level.targets.includes(normalized) && !solvedWords.includes(normalized)){ solvedWords.push(normalized); ok=true; msg=(normalized===level.main?'✓ Great! You found the main word.':'✓ Nice! You found a word.'); }
+  else if(solvedWords.includes(normalized)) msg='Already found that one.';
+  else msg='Not one of this level\'s words — try again.';
+  if(level.targets.every(w=>solvedWords.includes(w))){ data.wheelDone[level.key]=true; save(); ok=true; msg='✓ Level complete!'; }
+  $('wheelFeedback').className='feedback'+(ok?' ok':''); $('wheelFeedback').textContent=msg; $('wheelFeedback').classList.remove('hidden'); renderLevel();
+}
+function cancelDrag(){ window.removeEventListener('pointermove', onDragMove); dragging=false; selected=[]; renderWheel(); }
+function finishDrag(){ window.removeEventListener('pointermove', onDragMove); window.removeEventListener('pointercancel', cancelDrag); const word=guessedWord(); dragging=false; currentPointer=null; drawPath(); const hadWord=word.length>0; selected=[]; renderWheel(); if(hadWord) checkGuess(word); }
+$('wheelClear').onclick=()=>{ selected=[]; $('wheelFeedback').classList.add('hidden'); renderWheel(); };
+$('wheelShuffle').onclick=()=>{ shuffleArrayInPlace(wheelLetters); selected=[]; renderWheel(); };
+$('wheelNext').onclick=()=>openLevel((levelIndex+1)%Math.max(levels.length,1));
+$('wheelSelect').onchange=e=>openLevel(Number(e.target.value));
+$('startWheelHome').onclick=()=>{ if(!levels.length) refreshWordscapes(); openLevel(0); };
+function openLevel(index,changeTab=true){ if(!levels.length) refreshWordscapes(); if(!levels.length) return; levelIndex=index; const level=levels[levelIndex]; solvedWords=[]; wheelLetters=makeWheelLetters(level.bankWord); selected=[]; $('wheelFeedback').classList.add('hidden'); renderLevel(); if(changeTab) show('wordscapes'); }
+
+// Keyboard fallback
+window.addEventListener('keydown', e=>{
+  if($('wordscapes').classList.contains('hidden') || !levels[levelIndex]) return;
+  if(document.activeElement && ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+  if(e.key==='Backspace'){ e.preventDefault(); selected.pop(); renderWheel(); return; }
+  if(e.key==='Enter'){ e.preventDefault(); const word=guessedWord(); selected=[]; renderWheel(); checkGuess(word); return; }
+  if(e.key.length===1 && /^[a-z]$/i.test(e.key)){
+    const idx=wheelLetters.findIndex((ch,i)=>ch===e.key.toUpperCase() && !selected.includes(i));
+    if(idx>=0) addSelection(idx);
+  }
+});
+
+save(); render(); refreshWordscapes(); show('home');
+})();
+</script>
+</body>
+</html>
