@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Word Garden · English Practice</title>
+<title>Yuvi's Word Garden · English Practice</title>
 <style>
 :root{
   --bg:#f5f7fc; --card:#fff; --ink:#24324a; --muted:#68768e; --line:#e5eaf3;
@@ -37,6 +37,11 @@ input:focus,textarea:focus,select:focus{outline:2px solid #a59af4}
 footer{margin:28px 0;color:#8a94a7;font-size:12px}
 
 /* Wordscapes */
+.ws-stage{display:grid;grid-template-columns:minmax(0,1fr) 330px;align-items:center;gap:22px;margin:16px 0 6px}
+.ws-board{min-width:0;display:flex;align-items:center;justify-content:center;overflow-x:auto;padding:10px 0}
+.ws-play{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ws-play #wsGuess{width:100%}
+@media(max-width:760px){.ws-stage{grid-template-columns:minmax(0,1fr);gap:8px}.ws-board{overflow-x:auto}.ws-wheel-wrap{margin-top:8px}}
 .crossgrid{display:grid;gap:3px;justify-content:center;margin:14px auto 20px;width:fit-content;max-width:100%;overflow-x:auto;direction:ltr}
 .crosscell{width:37px;height:37px;display:grid;place-items:center;border-radius:6px;border:2px solid #c9d2e3;background:#fff;color:#293b56;font-size:19px;font-weight:850;flex-shrink:0}
 .crosscell.blank{visibility:hidden}.crosscell.main{background:#efeaff;border-color:#c9baf5}.crosscell.solved{background:#d9f4e7;border-color:#60b891;color:#207b55}
@@ -57,15 +62,15 @@ footer{margin:28px 0;color:#8a94a7;font-size:12px}
   <header>
     <div>
       <div class="eyebrow">Learn a little every day ✨</div>
-      <h1>🌱 Word Garden</h1>
+      <h1>🌱 Yuvi's Word Garden</h1>
       <p style="margin:6px 0">Your English spelling adventure</p>
     </div>
     <span class="pill" id="saveStatus">Saved on this device</span>
   </header>
 
   <nav class="tabs">
-    <button class="active" data-tab="home">Dashboard</button>
-    <button data-tab="practice">Spelling game</button>
+    <button data-tab="home">Dashboard</button>
+    <button class="active" data-tab="practice">Spelling game</button>
     <button data-tab="wordscapes">Wordscapes 🧩</button>
     <button data-tab="library">Word library</button>
     <button data-tab="progress">Progress & backup</button>
@@ -123,19 +128,24 @@ footer{margin:28px 0;color:#8a94a7;font-size:12px}
     <div class="panel">
       <div class="spaced"><span class="eyebrow">Wordscapes</span><span class="pill" id="wheelCount"></span></div>
       <h2 id="wheelTitle">Wordscapes</h2>
-      <div class="prompt" id="wheelHe"></div>
       <div class="wordscapes-clue" id="wsMainLabel"></div>
-      <div id="wsWords" class="crossgrid" aria-label="Crossword puzzle"></div>
-      <div id="wsGuess" aria-live="polite"></div>
-      <div class="ws-wheel-wrap">
-        <div id="wheelArea" aria-label="Letter wheel">
-          <svg id="wheelSvg" viewBox="0 0 300 300" aria-hidden="true">
-            <polyline id="wheelPath" fill="none" stroke="#6f62d6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></polyline>
-          </svg>
-          <div id="wheelCircle"></div>
-          <div id="wheelNodes"></div>
+      <div class="ws-stage">
+        <div class="ws-board">
+          <div id="wsWords" class="crossgrid" aria-label="Crossword puzzle"></div>
         </div>
-        <div class="muted" id="wsHint">Drag through the letters and release to submit.</div>
+        <div class="ws-play">
+          <div id="wsGuess" aria-live="polite"></div>
+          <div class="ws-wheel-wrap">
+            <div id="wheelArea" aria-label="Letter wheel">
+              <svg id="wheelSvg" viewBox="0 0 300 300" aria-hidden="true">
+                <polyline id="wheelPath" fill="none" stroke="#6f62d6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              </svg>
+              <div id="wheelCircle"></div>
+              <div id="wheelNodes"></div>
+            </div>
+            <div class="muted" id="wsHint">Drag through the letters and release to submit.</div>
+          </div>
+        </div>
       </div>
       <div id="wheelFeedback" class="feedback hidden" role="status"></div>
       <div class="row" style="justify-content:center;margin-top:18px">
@@ -184,7 +194,7 @@ footer{margin:28px 0;color:#8a94a7;font-size:12px}
     </div>
   </section>
 
-  <footer>Version 4 · Your progress stays on this device unless you export it.</footer>
+  <footer>Version 5 · Your progress stays on this device unless you export it.</footer>
 </div>
 
 <script>
@@ -325,10 +335,9 @@ function guessedWord(){ return selected.map(i=>wheelLetters[i]).join(''); }
 function renderLevel(){
   const level=levels[levelIndex]; if(!level) return;
   $('wheelTitle').textContent='Level '+(levelIndex+1)+(data.wheelDone[level.key]?' ✓':'');
-  $('wheelHe').textContent=level.he;
-  $('wsMainLabel').textContent='Find the word for the Hebrew clue ('+level.main.length+' letters) and the crossing words · '+solvedWords.length+' / '+level.targets.length+' found';
+  $('wsMainLabel').textContent='Find the hidden words · '+solvedWords.length+' / '+level.targets.length+' found';
   $('wheelCount').textContent=levels.filter(lvl=>data.wheelDone[lvl.key]).length+' / '+levels.length+' levels solved';
-  $('wheelSelect').replaceChildren(); levels.forEach((lvl,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=(i+1)+'. '+lvl.he+(data.wheelDone[lvl.key]?' ✓':''); $('wheelSelect').append(o); }); $('wheelSelect').value=String(levelIndex);
+  $('wheelSelect').replaceChildren(); levels.forEach((lvl,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent='Level '+(i+1)+(data.wheelDone[lvl.key]?' ✓':''); $('wheelSelect').append(o); }); $('wheelSelect').value=String(levelIndex);
   const cells=new Map(); let rows=0,cols=0;
   for(const p of level.placed) for(let i=0;i<p.word.length;i++){
     const r=p.r+(p.dir==='v'?i:0),c=p.c+(p.dir==='h'?i:0),key=r+','+c;
@@ -402,7 +411,7 @@ window.addEventListener('keydown', e=>{
   }
 });
 
-save(); render(); refreshWordscapes(); show('home');
+save(); render(); refreshWordscapes(); startSession('all');
 })();
 </script>
 </body>
