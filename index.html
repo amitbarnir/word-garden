@@ -202,7 +202,9 @@ footer{margin:28px 0;color:#8a94a7;font-size:12px}
 'use strict';
 const KEY='word-garden-v4';
 const seed=[
- ['מוזיקה','music'],['שיעור','lesson'],['אחות','sister'],['אח','brother'],['יום','day'],['עיר','town'],['יש לי','I have'],['אני בת ... שנים','I am ... years old'],['מועדף / אהוב','favorite'],['מורה','teacher'],['לרקוד','dance'],['אני','I'],['כתום','orange'],['קטן','small'],['רך','soft'],['שולחן כתיבה','desk'],['לגור','live'],['ללכת','go'],['עפרון צבעוני','crayon'],['כיתה','grade'],['לראות','see']
+ ['מוזיקה','music'],['שיעור','lesson'],['אחות','sister'],['אח','brother'],['יום','day'],['עיר','town'],['יש לי','I have'],['אני בת ... שנים','I am ... years old'],['מועדף / אהוב','favorite'],['מורה','teacher'],['לרקוד','dance'],['אני','I'],['כתום','orange'],['קטן','small'],['רך','soft'],['שולחן כתיבה','desk'],['לגור','live'],['ללכת','go'],['עפרון צבעוני','crayon'],['כיתה','grade'],['לראות','see'],
+ ['היא','she'],['לוח','board'],['לרצות','want'],['משפחה','family'],['חדר כיתה','classroom'],
+ ['ארוחת צהריים','lunch'],['שיעורי בית','homework'],['תלמיד/ה','pupil'],['לפגוש','meet'],['צריך','need']
 ];
 const COMMON_WORDS=[
  'all','art','ate','do','dot','eye','fit','got','its','lie','lot','mat','met','net','not','now','oil','our','out','own','pay','pot','rat','sat','sea','son','sum','tan','tap','tie','tin','tip','toy','two','won','yet',
@@ -219,6 +221,14 @@ const canSpell=(word, bank)=>{const need=countMap(word); for(const [ch,n] of Obj
 let data; try{ data=JSON.parse(localStorage.getItem(KEY)); if(!data) data=JSON.parse(localStorage.getItem('word-garden-v1')); }catch{}
 if(!data || !Array.isArray(data.words)) data={words:seed.map(([he,en],i)=>({id:i+1,he,en,tries:0,correct:0,wrong:0})),sessions:0,wheelDone:{}};
 data.wheelDone=data.wheelDone||{};
+// Merge newly assigned vocabulary into existing on-device collections without resetting progress.
+const existingPairs=new Set(data.words.map(w=>normalize(w.he)+'|'+normalize(w.en)));
+let nextId=Math.max(0,...data.words.map(w=>Number(w.id)||0))+1;
+for(const [he,en] of seed){
+  const pair=normalize(he)+'|'+normalize(en);
+  if(!existingPairs.has(pair)){data.words.push({id:nextId++,he,en,tries:0,correct:0,wrong:0});existingPairs.add(pair);}
+}
+
 function save(){ localStorage.setItem(KEY, JSON.stringify(data)); $('saveStatus').textContent='Saved on this device'; }
 function show(tab){ for(const sec of document.querySelectorAll('section')) sec.classList.add('hidden'); $(tab).classList.remove('hidden'); for(const b of document.querySelectorAll('.tabs button')) b.classList.toggle('active', b.dataset.tab===tab); }
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ if(b.dataset.tab==='practice'&&!sessionActive) startSession('all'); else show(b.dataset.tab); });
