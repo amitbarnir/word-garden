@@ -101,6 +101,7 @@ footer{margin:28px 0;color:#8a94a7;font-size:12px}
   <section id="practice" class="hidden">
     <div class="panel">
       <div class="spaced"><span class="eyebrow">Spelling challenge</span><span class="muted" id="count">0 of 0 complete</span></div>
+      <label>Practice <select id="practiceScope"><option value="all">All words</option><option value="latest">Latest sheet · Nov 23</option><option value="new">Words never mastered</option></select></label>
       <div class="progress" style="margin:14px 0"><div id="bar" style="width:0%"></div></div>
       <div id="game">
         <p style="text-align:center">Write this in English</p>
@@ -201,10 +202,13 @@ footer{margin:28px 0;color:#8a94a7;font-size:12px}
 (()=>{
 'use strict';
 const KEY='word-garden-v4';
-const seed=[
- ['מוזיקה','music'],['שיעור','lesson'],['אחות','sister'],['אח','brother'],['יום','day'],['עיר','town'],['יש לי','I have'],['אני בת ... שנים','I am ... years old'],['מועדף / אהוב','favorite'],['מורה','teacher'],['לרקוד','dance'],['אני','I'],['כתום','orange'],['קטן','small'],['רך','soft'],['שולחן כתיבה','desk'],['לגור','live'],['ללכת','go'],['עפרון צבעוני','crayon'],['כיתה','grade'],['לראות','see'],
+const latestSheet=[
  ['היא','she'],['לוח','board'],['לרצות','want'],['משפחה','family'],['חדר כיתה','classroom'],
  ['ארוחת צהריים','lunch'],['שיעורי בית','homework'],['תלמיד/ה','pupil'],['לפגוש','meet'],['צריך','need']
+];
+const seed=[
+ ['מוזיקה','music'],['שיעור','lesson'],['אחות','sister'],['אח','brother'],['יום','day'],['עיר','town'],['יש לי','I have'],['אני בת ... שנים','I am ... years old'],['מועדף / אהוב','favorite'],['מורה','teacher'],['לרקוד','dance'],['אני','I'],['כתום','orange'],['קטן','small'],['רך','soft'],['שולחן כתיבה','desk'],['לגור','live'],['ללכת','go'],['עפרון צבעוני','crayon'],['כיתה','grade'],['לראות','see'],
+ ...latestSheet
 ];
 const COMMON_WORDS=[
  'all','art','ate','do','dot','eye','fit','got','its','lie','lot','mat','met','net','not','now','oil','our','out','own','pay','pot','rat','sat','sea','son','sum','tan','tap','tie','tin','tip','toy','two','won','yet',
@@ -231,7 +235,7 @@ for(const [he,en] of seed){
 
 function save(){ localStorage.setItem(KEY, JSON.stringify(data)); $('saveStatus').textContent='Saved on this device'; }
 function show(tab){ for(const sec of document.querySelectorAll('section')) sec.classList.add('hidden'); $(tab).classList.remove('hidden'); for(const b of document.querySelectorAll('.tabs button')) b.classList.toggle('active', b.dataset.tab===tab); }
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ if(b.dataset.tab==='practice'&&!sessionActive) startSession('all'); else show(b.dataset.tab); });
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ if(b.dataset.tab==='practice'&&!sessionActive) startSession(sessionMode); else show(b.dataset.tab); });
 
 // Dashboard + library + backup
 function puzzleBaseWord(entry){
@@ -323,8 +327,22 @@ $('import').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ c
 // Spelling game
 let pool=[], current=null, phase='answer', sessionAttempts=0, sessionErrors=0, sessionActive=false, sessionTotal=0;
 function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
-function startSession(mode){ const ids=(mode==='new'?data.words.filter(w=>!w.correct):data.words).map(w=>w.id); if(!ids.length) return alert(mode==='new'?'Every word has already been mastered once.':'Please add some words first.'); pool=shuffle(ids); sessionTotal=pool.length; sessionActive=true; sessionAttempts=0; sessionErrors=0; $('finished').classList.add('hidden'); $('game').classList.remove('hidden'); pick(); show('practice'); }
-$('startAll').onclick=()=>startSession('all'); $('startNew').onclick=()=>startSession('new'); $('again').onclick=()=>startSession('all'); $('restart').onclick=()=>startSession('all'); $('backHome').onclick=()=>show('home');
+let sessionMode='all';
+const latestPairs=new Set(latestSheet.map(([he,en])=>normalize(he)+'|'+normalize(en)));
+$('practiceScope').onchange=e=>startSession(e.target.value);
+function startSession(mode){
+  let words=data.words;
+  if(mode==='new') words=words.filter(w=>!w.correct);
+  if(mode==='latest') words=words.filter(w=>latestPairs.has(normalize(w.he)+'|'+normalize(w.en)));
+  const ids=words.map(w=>w.id);
+  if(!ids.length){
+    $('practiceScope').value=sessionMode;
+    return alert(mode==='new'?'Every word has already been mastered once.':'No words available for this practice set.');
+  }
+  sessionMode=mode;
+  $('practiceScope').value=mode;
+  pool=shuffle(ids); sessionTotal=pool.length; sessionActive=true; sessionAttempts=0; sessionErrors=0; $('finished').classList.add('hidden'); $('game').classList.remove('hidden'); pick(); show('practice'); }
+$('startAll').onclick=()=>startSession('all'); $('startNew').onclick=()=>startSession('new'); $('again').onclick=()=>startSession(sessionMode); $('restart').onclick=()=>startSession(sessionMode); $('backHome').onclick=()=>show('home');
 function updateGame(){ const doneTotal=Math.max(0,sessionTotal-pool.length); const complete=sessionTotal?Math.round(doneTotal/sessionTotal*100):0; $('count').textContent=`${doneTotal} of ${sessionTotal} complete`; $('bar').style.width=complete+'%'; }
 function pick(){ if(!pool.length){ sessionActive=false; current=null; data.sessions++; save(); $('game').classList.add('hidden'); $('finished').classList.remove('hidden'); $('summary').textContent=`You finished the session with ${sessionAttempts-sessionErrors} correct answers and ${sessionErrors} mistakes corrected along the way.`; render(); return; } current=pool[Math.floor(Math.random()*pool.length)]; const w=data.words.find(x=>x.id===current); phase='answer'; $('hebrew').textContent=w.he; $('answer').value=''; $('answer').disabled=false; $('answerForm').classList.remove('hidden'); $('feedback').classList.add('hidden'); $('continue').classList.add('hidden'); $('answer').focus(); updateGame(); }
 $('answerForm').onsubmit=e=>{ e.preventDefault(); if(phase!=='answer') return; const guess=$('answer').value.trim(); if(!guess) return; const w=data.words.find(x=>x.id===current); w.tries++; sessionAttempts++; const ok=normalize(guess)===normalize(w.en); if(ok){ w.correct++; pool=pool.filter(id=>id!==current); $('feedback').className='feedback ok'; $('feedback').textContent='✓ Correct! Great job. This word is complete for today.'; } else { w.wrong++; sessionErrors++; $('feedback').className='feedback'; $('feedback').textContent='Not quite! Correct spelling: '+w.en+'. You will see this word again.'; }
